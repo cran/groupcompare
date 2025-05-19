@@ -1,0 +1,92 @@
+---
+title: "Statistical Tests for Comparison of Two Groups"
+author: "Zeynel Cebeci, A. Firat Ozdemir, Engin Yildiztepe"
+date: "3 May 2025"
+encoding: UTF-8
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+    number_sections: true
+    toc: true             
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Statistical Tests for Comparison of Two Groups}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteTangle{TRUE}
+---
+<style>
+body{
+text-align: justify}
+</style>
+
+# Introduction
+This vignette offers an in-depth exploration of methodologies and statistical tests for comparing two independent or paired groups using the package `groupcompare` in R. It covers a range of techniques, including parametric and non-parametric tests, permutation methods, and bootstrap approaches. By simulating normal distributed data for two groups, the document provides a step-by-step guide to data preparation, visualization, and analysis. The centerpiece of the vignette is the core function `groupcompare`, which is employed to compare group statistics and interpret the results thoroughly. The vignette further highlights the adaptability of the statistical tests, allowing users to tailor them to meet specific statistics and unique analytical scenarios.
+
+# Required Packages and Data Sets
+
+## Install and load the package gpcomp
+The recent version of the package from CRAN is installed with the following command:
+
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+install.packages("groupcompare", dep=TRUE)
+```
+
+If you have already installed '`groupcompare`', you can load it into R working environment by using the following command:
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+library("groupcompare")
+```
+
+## Data sets 
+The dataset to be analyzed should be long-formatted where the values are entered in the first column and the group names are entered in the second column. In the following code chunk, a dataset named `ds1` is created using the `ghdist` function to simulate a G&H distribution. The generated dataset contains data for two groups named `A` and `B`, each consisting of 25 observations, with a mean of 50 and a standard deviation of 2. In the example, by assigning zeros to the skewness (`g`) and kurtosis (`h`) arguments, the simulated data is intended to have a normal distribution. As expected, the means and variances of groups `A` and `B` are made equal. In the example, the generated dataset is in wide format, and immediately after, it is converted to long format using the `wide2long` function to create the dataset `ds2`. This provides an idea of the long data format, and as can be seen, in the long data format, the first column contains the observation values, while the second column contains the group names or labels. As understood from the example, different groups can be created by changing the means, variances, skewness, and kurtosis parameters.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+ set.seed(30) # For reproducibility purpose
+ grp1 <- ghdist(25, 50, 2, g=0, h=0)
+ grp2 <- ghdist(25, 50, 2, g=0, h=0)
+ ds1 <- data.frame(grp1=grp1, grp2=grp2)
+ head(ds1)
+
+ # Data in long format
+ ds2 <- wide2long(ds1)
+ head(ds2)
+```
+
+# Data Visualization
+For statistical tests, data visualization is performed before the analysis to provide insights about the structure or distribution of the data. In the comparison of two groups using parametric tests such as the *t*-test, visualization provides preliminary information on whether the assumptions of the test are satisfied. The `bivarplot` function in the following code chunk facilitates the examination and comparison of group data using various plots. 
+
+```{r fig.width=8, fig.height=7}
+bivarplot(ds2)
+```
+
+# Statistical Tests
+The `groupcompare` function of the package, given an example of its usage in the following code chunk, compares the groups in the dataset using various statistical tests and returns the results. In the code chunk below, `statistic` is the name of the function that calculates and returns the differences in the statistics of the groups to compare them. In the example, `calcstatdif` is a function that calculates and returns the differences between group means, medians, interquartile ranges, and variances. Among its arguments, `cl` shows the confidence level, and `R` shows the number of resampling for permutation tests and bootstrap. In the function call `qtest` describes whether a quantile comparison test is also performed. In the example, it is set to `FALSE`. Among other arguments, `plots` indicates whether to generate the visualization of the group values as shown in the example above, while setting `verbose` to `TRUE` shows all the steps and analysis results in detail during the run. If the results of the analysis are to be saved, setting the `out` argument to `TRUE` saves the results in a file named `*dataframe_name*.txt`.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+results <- groupcompare(ds2, alternative="two.sided", cl=0.95, qtest=FALSE, 
+R=1000, plots=FALSE, out=FALSE, verbose=TRUE)
+```
+
+The `descriptives` component in the result object is a data frame containing common descriptive statistics related to the two compared groups. The `inference` component of the result list contains the statistics and significance values related to appropriate group comparison tests. 
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+results$descriptives
+results$meanstest
+results$inference
+```
+
+# Results and Interpretation
+The `meanstest` component in the result includes statistics related to group comparison tests and the significance probability value for the hypothesis test conducted at _alpha = 1-cl_ Type I error. 
+In the output includes `test` includes the test result used at inference. Specifically, if the assumptions of the parametric _t_-test are met, the _t_-test results are returned; if not, non-parametric test results are provided. If the distributions are not similar, results from bootstrap and permutation tests are presented.
+
+In the output, `t` and `t.p` are the _t_-statistic and significance probability for the _t_-test, respectively; `W` and `W.p` are the _W_-statistic and significance probability for the relevant non-parametric test, respectively. Looking at the results obtained. In the results, `per.mean` and `per.med` show the _p_-values determined with the permutation test for the mean and median, respectively.  In the output, `mean.bca.lower` and `mean.bca.upper`, along with `med.bca.lower` and `med.bca.upper`, represent the lower and upper limits of the confidence intervals calculated by the _BCa_ method at the `cl` confidence level for the mean and median, respectively. 
+
+# Tests for Statistics Other Than the Mean
+With the `groupcompare` function of the package, it is also possible to test whether the differences in statistics other than the mean and median are significant. To do this, an external R function that calculates the differences for the interested statistics should be coded and assigned to the `statistic` argument of the function. Once this function code is loaded into the global environment in the R environment and its name is assigned to the statistic argument, group comparisons for the desired statistics can be performed.
+
+Essentially, the `calcstatdif` function in the package is also such a function. This function is used for permutation and bootstrap tests in addition to the _t_-test and non-parametric test for the mean and median. The function also applies permutation and bootstrap tests for differences in the interquartile range (`IQR`) and variance (`VAR`) of the groups, alongside the mean and median. To see these outputs, it is sufficient to set the `verbose` argument of the `groupcompare` function to `TRUE` as done in the function call of the example above. In the output, `MEAN`, `MED`, `IQR`, `VAR`, `SKEW` and `KURT` show the _p_-values from permutation test and bootstrap confidence intervals for the differences in the mean, median, interquartile range, variance, skewness and kurtosis, respectively. Additionally, it should be noted that these results can be saved to a file in the working directory by setting the `out` argument to `TRUE`.
+
+In order to make a comparison in terms of quantiles of the groups, the `qtest` argument of the `groupcompare` function should be set to `TRUE`, and pass the quantiles you want to compare as a percentile vector to the `q` argument.
+

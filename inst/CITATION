@@ -1,0 +1,13 @@
+citHeader("To cite groupcompare in publications use:")
+
+textVersion = "Cebeci Z., (2023). _Applied Resampling Statistics with R_. Pegem Academic Publishing, TR: Ankara <ISBN: 9786257052603>."
+
+bibentry(
+  bibtype = "Book",
+  title = "Applied Resampling Statistics with R",
+  author = person("Zeynel", "Cebeci"),
+  year = 2023,
+  publisher = "Pegem Academic Publishing",
+  address = "TR: Ankara",
+  isbn = "9786257052603"
+)

@@ -1,0 +1,91 @@
+---
+title: "Comparison of Quantiles of Two Groups with Permutation Tests"
+author: "Zeynel Cebeci, A. Firat Ozdemir, Engin Yildiztepe"
+date: "5 May 2025"
+encoding: UTF-8
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+    number_sections: true
+    toc: true             
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Comparison of Quantiles of Two Groups with Permutation Tests}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteTangle{TRUE}
+---
+<style>
+body{
+text-align: justify}
+</style>
+
+# Introduction
+This vignette provides a comprehensive guide for performing permutation tests to compare quantiles of two groups in R. A permutation test is a non-parametric statistical method that involves rearranging the data points to generate a distribution of a test statistic under the null hypothesis. This technique is particularly useful when the assumptions required for traditional parametric tests are not met, providing a robust alternative for statistical inference.
+
+In experiments involving two groups, it is essential to assess whether there are significant differences between their distributions. Traditional methods might focus on comparing means or medians, but quantile comparison offers a deeper insight into the distributional characteristics of the groups. Quantiles, such as the median (50th percentile) or quartiles (25th and 75th percentiles), divide the data into equal parts and highlight specific points in the dataset that are critical for understanding the distribution's shape and spread.
+
+This vignette demonstrates how to implement permutation tests for quantile comparison using the `permtest` function in the package `groupcompare`. By following the steps outlined, users will be able to conduct thorough statistical analyses and draw meaningful conclusions about their data.
+
+# Required Packages and Data Sets
+
+## Install and load the package gpcomp
+The recent version of the package from CRAN is installed with the following command:
+
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+install.packages("groupcompare", dep=TRUE)
+```
+
+If you have already installed `groupcompare`, you can load it into R working environment by using the following command:
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+library("groupcompare")
+```
+
+## Data sets 
+The dataset to be analyzed can be in wide format where the values for _Group 1_ and _Group 2_ are written in two separate columns or in long format where the values are entered in the first column and the group names are entered in the second column. In the following code chunk, a dataset named `ds1` is created using the `ghdist` function to simulate the G&H distribution. The generated dataset contains data for two groups named `A` and `B`, each consisting of 25 observations, with a mean of 50 and a standard deviation of 2. In the example, by assigning zeros to the skewness (`g`) and kurtosis (`h`) arguments, the simulated data is intended to have a normal distribution. As expected, the means and variances of groups `A` and `B` are done equal. In the example, the generated dataset is in wide format, and immediately after, it is converted to long format using the wide2long function to create the dataset `ds2`. This provides an idea of the long data format, and as can be seen, in the long data format, the first column contains the observation values, while the second column contains the group names or codes. As understood from the example, different groups can be created by changing the means, variances, skewness, and kurtosis parameters.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+ set.seed(12) # For reproducibility purpose
+ grp1 <- ghdist(50, 50, 2, g=0, h=0)
+ grp2 <- ghdist(50, 45, 4, g=0.8, h=0)
+ ds1 <- data.frame(grp1=grp1, grp2=grp2)
+ head(ds1)
+
+ # Data in long format
+ ds2 <- wide2long(ds1)
+ head(ds2)
+```
+
+# Data Visualization
+For statistical tests, data visualization is performed before the analysis to provide insights about the structure or distribution of the data. In the comparison of two groups using parametric tests such as the *t*-test, visualization provides preliminary information on whether the assumptions of the test are met. The `bivarplot` function in the following code chunk facilitates the examination and comparison of group data using various plots. 
+
+```{r fig.width=8, fig.height=7}
+bivarplot(ds2)
+```
+
+# Resampling Statistics with Permutations
+The `permtest` function of the package `groupcompare`, given an example of its usage in the following code chunk, compares the groups in the dataset using permutations and returns the results. In the result object, `pval` contains the _p_-values of for the differences of each statictic related to two compared groups. (Please note that the value of R should be higher (e.g. 3000) in real-world applications.)
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+results <- permtest(ds2, statistic=calcquantdif, alternative="two.sided", R=500)
+```
+In the code chunk above, `ds2` is the name of dataset in long data format in which the group names locate in the second column. As a mandatory argument, the `statistic` is the name of the function that calculates and returns the quantile differences  of the compared groups. In the example, `calcquantdif` is a function that calculates and returns the differences between group quantiles. Among its arguments, `alternative` shows the type of null hyphothesis. The default is `two.sided` but it can be set to `less` or `greater` for a single-tail alternative hyphothesis as well. `R` shows the number of repetitions for bootstrap. The default number of permutations is 5000 but it is recommended to increase up to a number as high as 20000.
+
+# Results and Interpretation
+Below, the code chunk displays the structure of `results` object and the results stored obtained above. Here, `results$tstar` stores the statistics obtained in permutations and can be used for further visualization and analysis. As it is seen, the _p_-values are `2.20e-16` for the difference between all of the quantiles, meaning all the quantiles are siginificantly different. 
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+str(results)
+results$t0
+head(results$tstar)
+results$pval
+```
+
+# Other Tests
+In addition to permutation test, performing bootstrap can be useful for validation of the results when comparing the quantiles of two groups. For this purpose, the `bootstrap` function in the `groupcompare` package can be run. For details, you can refer to the usage documentation of the package as well as the vignette titled *Quantiles Comparison of Two Groups with Bootstrap*.
+
+While _p_-values for the difference of percentiles of two groups have been calculated here, significance differences for other group statistics can be determined by passing different function names to the `statistic` argument. For example, when the `calcstatdif` function is assigned to the `statistic` argument in the example above, _p_-values can be calculated for the differences between the means, medians, IQRs, and variances of the two groups.
+
+

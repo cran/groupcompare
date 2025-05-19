@@ -1,0 +1,99 @@
+---
+title: "Comparing Quantiles of Two Groups with Bootstrap"
+author: "Zeynel Cebeci, A. Firat Ozdemir, Engin Yildiztepe"
+date: "5 May 2025"
+encoding: UTF-8
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+    number_sections: true
+    toc: true             
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Quantiles Comparison of Two Groups with Bootstrap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteTangle{TRUE}
+---
+<style>
+body{
+text-align: justify}
+</style>
+
+# Introduction
+This vignette serves as a comprehensive guide to compare quantiles of two groups data with bootstrap using the `groupcompare` package in R. Bootstrap is a powerful statistical technique that involves repeatedly resampling a dataset to estimate the sampling distribution of a statistic. It is particularly useful for assessing the accuracy and variability of estimates when the underlying distribution is unknown.
+
+In experiments involving two groups, it is often essential to compare their distributions to determine if there are significant differences. Conventional parametric tests may not always be appropriate, especially when the data does not meet the assumptions of normality or homogeneity of variances. In such cases, non-parametric approaches like the bootstrap provide a robust alternative.
+
+Quantiles are specific points in a dataset that divide the data into equal intervals, such as the median (50th percentile) or quartiles (25th and 75th percentiles). Comparing the quantiles of two groups can reveal differences in their central tendency, spread, and overall distribution. This vignette demonstrates how to implement bootstrap methods for quantile comparison using the `bootstrap` function of `groupcompare` package in R. By following the outlined steps, users will be able to perform rigorous statistical analyses and draw meaningful conclusions about their data.
+
+# Required Packages and Data Sets
+
+## Install and load the package gpcomp
+The recent version of the package from CRAN is installed with the following command:
+
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+install.packages("groupcompare", dep=TRUE)
+```
+
+If you have already installed '`groupcompare`', you can load it into R working environment by using the following command:
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+library("groupcompare")
+```
+
+## Data sets 
+The dataset to be analyzed can be in wide format where the values for _Group 1_ and _Group 2_ are written in two separate columns or in long format where the values are entered in the first column and the group names are entered in the second column. In the following code chunk, a dataset named `ds1` is created using the `ghdist` function to simulate the G&H distribution. The generated dataset contains data for two groups named `A` and `B`, each consisting of 25 observations, with a mean of 50 and a standard deviation of 2. In the example, by assigning zeros to the skewness (`g`) and kurtosis (`h`) arguments, the simulated data is intended to have a normal distribution. As expected, the means and variances of groups `A` and `B` are done equal. In the example, the generated dataset is in wide format, and immediately after, it is converted to long format using the `wide2long` function to create the dataset `ds2`. This provides an idea of the long data format, and as can be seen, in the long data format, the first column contains the observation values, while the second column contains the group names or codes. As understood from the example, different groups can be created by changing the means, variances, skewness, and kurtosis parameters.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+ set.seed(12) # For reproducibility purpose
+ grp1 <- ghdist(50, 50, 2, g=0, h=0)
+ grp2 <- ghdist(50, 45, 4, g=0.8, h=0)
+ ds1 <- data.frame(grp1=grp1, grp2=grp2)
+ head(ds1)
+
+ # Data in long format
+ ds2 <- wide2long(ds1)
+ head(ds2)
+```
+
+# Data Visualization
+For statistical tests, data visualization is performed before the analysis to provide insights about the structure or distribution of the data. In the comparison of two groups using parametric tests such as the *t*-test, visualization provides preliminary information on whether the assumptions of the test are met. The `bivarplot` function in the following code chunk facilitates the examination and comparison of group data using various plots. 
+
+```{r fig.width=8, fig.height=7}
+bivarplot(ds2)
+```
+
+# Resampling Statistics with Bootstrap 
+The `bootstrap` function of the package, given an example of its usage in the following code chunk, compares the groups in the dataset using percentiles and returns the results. Each item in the result object is a data frame containing the confidence limits related to two compared groups. 
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+results <- bootstrap(ds2, statistic=calcquantdif, alpha=0.05, R=300)
+str(results)
+results
+```
+
+In the code chunk above, `ds2` is the name of dataset in long data format in which the group names locate in the second column. As a mandatory argumant, the `statistic` is the name of the function that calculates and returns the quantile differences  of the groups are being compared. In the example, `calcquantdif` is a function that calculates and returns the differences between group quantiles. Among its arguments, `alpha` shows the Type I error level, and `R` shows the number of repetitions for bootstrap.
+
+# Results and Interpretation
+In each data frame in the results object in the output above, the `normal`, `basic`, `percentile` and `bca` stand for types of the condifence intervals computead using the methods of *Normal*, *Basic*, *Percentile* and *BCa*, respectively. 
+
+In the above example, the list of confidence intervals calculated for various percentile differences is converted into a data frame as shown in the example below. This makes easy to check the results and also to prepare the output for a probale report.
+
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
+# Arrange the results as a data frame
+ci2df(results)
+```
+Indeed, determining which confidence interval to use is crucial for interpreting the results accurately.
+ 
+  * Larger sample sizes generally provide more reliable estimates and narrower confidence intervals.
+  * Understanding the distribution of your data helps in choosing appropriate confidence intervals. For instance, if the data is normally distribute, the CIs computed with normal method is recommended.
+  * Depending on whether the aim for a broad overview or a detailed analysis, one can might choose wider or narrower confidence intervals.
+
+# Other Tests
+In addition to bootstrap, performing permutation tests can be useful for validation of the results when comparing the quantiles of two groups. For this purpose, the `permtest` function in the `groupcompare` package can be used. For details, you can refer to the usage documentation of the package as well as the vignette titled *Quantiles Comparison of Two Groups with Permutation Tests*.
+
+While confidence intervals for the difference of percentiles have been calculated here, significance differences for other group statistics can be determined by passing different function names to the `statistic` argument. For example, when the `calcstatdif` function is assigned to the `statistic` argument in the example above, bootstrap confidence intervals can be calculated for the differences between the means, medians, IQRs, and variances of the two groups.
+
+

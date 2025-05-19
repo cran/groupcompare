@@ -1,0 +1,23 @@
+# groupcompare 0.2.2 (2025-05-03)
+
+* Changes:
+    - The function groupcompare was changed. The statistic argument
+      was removed because the function only compares the descriptive statistics.
+* New features:
+    - The function calchubermeandif was added to the package to demonstrate
+      how to compare the custom statistics using the user-defined functions.
+    - The permtest was updated to return the skewness and kurtosis significance 
+      probabilities to decide the test inference in the groupcompare function.
+
+# groupcompare 0.2.3 (2025-05-06)
+
+* Changes:
+    - The function groupcompare was changed. The lognorm argument
+      was added to perform log-normalization as an option.
+* New features:
+    - The quail dataset was added to the package.
+
+# groupcompare 1.0.0 (2025-05-15)
+
+* Submission to CRAN:
+    - The package was submitted to the CRAN. 

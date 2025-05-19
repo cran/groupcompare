@@ -1,0 +1,8 @@
+exportPattern("^[^\\.]")
+import("boot", "vioplot")
+importFrom("stats", "cor", "density", "ecdf", "median", "sd", "var", "rnorm", "qqnorm", "IQR")
+importFrom("stats", "reshape", "shapiro.test", "qqline", "quantile", "t.test", "var.test", "wilcox.test")
+importFrom("stats", "aov", "ave", "dbeta", "mad", "qnorm",  "pnorm", "na.omit", "setNames")
+importFrom("graphics", "boxplot", "plot", "legend", "lines", "title", "abline", "hist", "par", "points")
+importFrom("utils", "read.table", "read.csv")
+importFrom("grDevices", "colorRampPalette")
