@@ -10,7 +10,7 @@
    R=3000, plots=TRUE, out=FALSE, verbose=TRUE)
 }
 \arguments{
- \item{ds}{A data frame or matrix with the first column representing the first group and the second column the second group.}
+ \item{ds}{A data frame in long format, where the first column represents the observations and the second column the group names or labels.}
  \item{paired}{A logical flag indicating whether the group data is paired (i.e., related). Set to TRUE for paired groups.}
  \item{cl}{Confidence level for the interval. The default is 0.95. The significance level (Alpha, Type I error) equals 1-cl.}
  \item{alternative}{Type of alternative hypothesis: $\code{"two.sided"}$, $\code{"less"}$, or $\code{"greater"}$. The default is $\code{"two.sided"}$, corresponding to a two-tailed test.}

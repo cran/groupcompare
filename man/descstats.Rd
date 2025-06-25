@@ -49,8 +49,8 @@ descriptives$se
 # This parameter is used to calculate the Huber M-estimator of the location
 # Array of k values for testing
 k <- seq(0, 5, by = 0.1)
-
-result <- sapply(k, function(k) (descstats(x, k = k)$hubermean))
+k <- k[k> 0]
+result <- sapply(k, function(y) descstats(x, k = y)$hubermean)
 names(result) <- paste0("k=", k)
 result
 

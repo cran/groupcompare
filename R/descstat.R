@@ -63,11 +63,16 @@ descstats <- function(x, trim=0.1, k=1.5){
 
   # Huber M-estimator calculation function
   hubermest <- function(x, k = 1.5, tol = 1e-6, niter = 100) {
-    xmed <- median(x)  # Use median as the initial value
+    if (k <= 0 || !is.finite(k)) {
+      warning("Invalid value for k. Must be positive and non-zero.")
+      return(NA)
+    }
+    xmed <- median(x)
     for (i in 1:niter) {
       u <- (x - xmed) / k
-      w <- pmin(1, k / abs(u))  # Weights
-      xmednew <- sum(w * x) / sum(w)  # New estimate 
+      w <- pmin(1, k / abs(u))
+      xmednew <- sum(w * x) / sum(w)
+      if (!is.finite(xmednew)) return(NA)
       if (abs(xmednew - xmed) < tol) break
       xmed <- xmednew
     }
@@ -110,7 +115,7 @@ descstats <- function(x, trim=0.1, k=1.5){
      xskew <- skew(x)
      xkurt <- kurtosis(x)
      xwinsmean <- winsorizedmean(x, trim=trim)[1]
-     xhubmean <- hubermest(x, niter=500)
+     xhubmean <- hubermest(x, niter=500, k=k)
      descriptives <- c(n, xmin, xmax, xmean, xse, xtrmean, xmed, xmad, 
        xskew, xkurt, xwinsmean, xhubmean, xrange, xiqr, xsd)  
      names(descriptives) <- c("n", "min", "max", "mean", "se", "trmean", "med", "mad",

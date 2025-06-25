@@ -21,3 +21,12 @@
 
 * Submission to CRAN:
     - The package was submitted to the CRAN. 
+
+# groupcompare 1.0.1 (2025-06-25)
+
+* Changes:
+    - Minor typographical errors were fixed in the documentation files of groupcompare
+      and bivarplot functions.
+    * The citation was updated. 
+* New features:
+    - The argument k was added to the descstat function.

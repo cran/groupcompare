@@ -1,13 +1,17 @@
 citHeader("To cite groupcompare in publications use:")
 
-textVersion = "Cebeci Z., (2023). _Applied Resampling Statistics with R_. Pegem Academic Publishing, TR: Ankara <ISBN: 9786257052603>."
+textVersion = "Cebeci, Z., Ozdemir, A.F., & Yildiztepe, E. (2025). groupcompare: Comparing Two Groups Using Various Descriptive Statistics. R package version 1.0.1, https://CRAN.R-project.org/package=groupcompare"
 
 bibentry(
-  bibtype = "Book",
-  title = "Applied Resampling Statistics with R",
-  author = person("Zeynel", "Cebeci"),
-  year = 2023,
-  publisher = "Pegem Academic Publishing",
-  address = "TR: Ankara",
-  isbn = "9786257052603"
+  bibtype = "Manual",
+  title = "groupcompare: Comparing Two Groups Using Various Descriptive Statistics",
+  author = c(
+    person(given = "Zeynel", family = "Cebeci"),
+    person(given = "Firat", family = "Ozdemir"),
+    person(given = "Engin", family = "Yildiztepe")
+  ),
+  year = 2025,
+  note = "R package version 1.0.1",
+  url = "https://CRAN.R-project.org/package=groupcompare",
+  package = "groupcompare"
 )

@@ -46,10 +46,10 @@ bivarplot <- function(ds){
    title("Violin Plots")
 
    # QQ plots 
-   qqnorm(x, pch=21, bg="gray90", xlab="Theoritical quantiles", 
+   qqnorm(x, pch=21, bg="gray90", xlab="Theoretical quantiles", 
      ylab="Sample quantiles", main=paste("QQ Plot (", gn[1],")"))
    qqline(x, col=2)
-   qqnorm(y, pch=21,bg="gray90", xlab="Theoritical quantiles", 
+   qqnorm(y, pch=21,bg="gray90", xlab="Theoretical quantiles", 
      ylab="Sample quantiles", main=paste("QQ Plot (", gn[2],")"))
    qqline(y, col=4)
 

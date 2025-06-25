@@ -1,8 +1,8 @@
 Package: groupcompare
 Type: Package
 Title: Comparing Two Groups Using Various Descriptive Statistics
-Version: 1.0.0
-Date: 2025-5-10
+Version: 1.0.1
+Date: 2025-6-25
 Authors@R: c(person("Zeynel", "Cebeci", email = "zcebeci@cu.edu.tr", role = c("aut", "cre")), person("A. Firat", "Ozdemir", email = "firat.ozdemir@deu.edu.tr", role = c("aut")), person("Engin", "Yildiztepe", email = "engin.yildiztepe@deu.edu.tr", role = c("aut")))
 Author: Zeynel Cebeci [aut, cre],
   A. Firat Ozdemir [aut],
@@ -16,6 +16,6 @@ Imports: boot, vioplot
 Suggests: knitr, rmarkdown, prettydoc
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-05-15 11:38:24 UTC; user1
+Packaged: 2025-06-25 19:16:19 UTC; user1
 Repository: CRAN
-Date/Publication: 2025-05-19 14:20:02 UTC
+Date/Publication: 2025-06-25 19:50:05 UTC

@@ -24,6 +24,7 @@ Zeynel Cebeci, A. Firat Ozdemir, Engin Yildiztepe
 set.seed(1)
 df1 <- data.frame(value = rnorm(100), group = rep(1:2, each = 50))
 head(df1)
+
 # Plots for visualization
 bivarplot(df1)
 

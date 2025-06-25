@@ -83,7 +83,7 @@ This package is released under the GPL (>= 2) License.
 
 If you use `groupcompare` in your research or work, please cite it as follows:
 
-Cebeci, Z. Ozdemir, A. F., & Yildiztepe, E. (2025). groupcompare: Comparing Two Groups with Various Descriptive Statistics (Version 1.0.0). Available from https://CRAN.R-project.org/package=groupcompare
+Cebeci, Z. Ozdemir, A. F., & Yildiztepe, E. (2025). groupcompare: Comparing Two Groups with Various Descriptive Statistics (Version 1.0.1). Available from https://CRAN.R-project.org/package=groupcompare
 
 
 
